@@ -137,9 +137,19 @@ nmi:    pha
         pha
         txa
         pha
-; 
+
+; Do either a sprite DMA or flush the ppu buffer
+
+        ldx     #0
         ldy     ppust_count
-        jmp     @st
+        lda     sprdma_en
+        bpl     @st
+        stx     PPU_SPR_ADDR
+        lda     #2
+        sta     APU_SPR_DMA
+        sta     sprdma_en
+        bne     @s0
+
 @l:     lda     ppust_buff+$A0,y
         sta     PPU_VRAM_ADDR2
         lda     ppust_buff+$50,y
@@ -148,7 +158,7 @@ nmi:    pha
         sta     PPU_VRAM_IO
 @st:    dey
         bpl     @l
-        iny                     ; Y = 0
+@s0:
 
 ; Read byte from VRAM if requested
         lda     ppuld_hi
@@ -159,31 +169,23 @@ nmi:    pha
         lda     PPU_VRAM_IO
         lda     PPU_VRAM_IO
         sta     ppuld_val
-        sty     ppuld_hi
+        stx     ppuld_hi
 @s1:
 
 ; Reset scrolling.
-        sty     PPU_VRAM_ADDR1
-        sty     PPU_VRAM_ADDR1
+        stx     PPU_VRAM_ADDR1
+        stx     PPU_VRAM_ADDR1
 
 ; Reset nametable bits
-        ldx     #$A0
-        stx     PPU_CTRL1
+        ldy     #$A0
+        sty     PPU_CTRL1
 
 ; Apply rendering buffer
         lda     ppuctrl2_buf
         sta     PPU_CTRL2
 
-; Do a sprite DMA if requested
-        lda     sprdma_en
-        bpl     @s2
-        lda     #2
-        sta     APU_SPR_DMA
-        sta     sprdma_en
-@s2:
-
-        sty     ppust_count
-        stx     VBLANK_FLAG     ; X != 0
+        stx     ppust_count
+        sty     VBLANK_FLAG     ; X != 0
 
         inc     tickcount
         bne     @s3
