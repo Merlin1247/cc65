@@ -1,37 +1,37 @@
 ;
 ; Written by Groepaz/Hitmen <groepaz@gmx.net>
 ; Cleanup by Ullrich von Bassewitz <uz@cc65.org>
+; Rewritten by Brandon Woodward
 ;
-; Set the cursor position
+; Set the cursor position and screen position
 
-        .export         setcursor
+        .export         setcursor_pos, setcursor_posx, setcursor_screenptr
+        .export         setcursor_screenptr
 
         .include        "nes.inc"
 
 ;-----------------------------------------------------------------------------
 
-.proc   setcursor
+;y+(++x*32)+$2000
+setcursor_pos:
+        STX CURS_Y
+setcursor_posx:
+        STY CURS_X          ; Fallthrough
 
-        tya
-        clc
-        adc     addrlo,x
-        sta     SCREEN_PTR
+.proc   setcursor_screenptr
 
-        lda     addrhi,x
-        adc     #0
-        sta     SCREEN_PTR+1
+        sty SCREEN_PTR      ; Target val: --1000xx xxxyyyyy
+        inx
+        txa
+        sec
+        ror A 
+        ror A
+        ror a
+        sta SCREEN_PTR+1    ; Contains garbage in the most significant 2 bits
+        and #%11000000
+        ROR A
+        adc SCREEN_PTR
+        sta SCREEN_PTR
         rts
 
 .endproc
-
-;-----------------------------------------------------------------------------
-; Tables with screen addresses
-
-addrlo: .repeat screenrows,line
-        .byte <($2000+((1*32))+(line*charsperline))
-        .endrepeat
-
-addrhi: .repeat screenrows,line
-        .byte >($2000+((1*32))+(line*charsperline))
-        .endrepeat
-

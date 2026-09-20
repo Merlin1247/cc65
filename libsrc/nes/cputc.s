@@ -1,6 +1,7 @@
 ;
 ; Written by Groepaz/Hitmen <groepaz@gmx.net>
 ; Cleanup by Ullrich von Bassewitz <uz@cc65.org>
+; Optimizations by Brandon Woodward
 ;
 ; void cputcxy (unsigned char x, unsigned char y, char c);
 ; void cputc (char c);
@@ -13,7 +14,7 @@
         .constructor    initconio
         .import         gotoxy
         .import         ppuinit, paletteinit, ppubuf_put
-        .import         setcursor
+        .import         setcursor_pos, setcursor_screenptr
 
         .importzp       tmp3,tmp4
 
@@ -48,22 +49,22 @@ cputdirect:
 
 advance:
         ldy     CURS_X
+        ldx     CURS_Y
         iny
         cpy     #xsize
         bne     L3
-        inc     CURS_Y          ; new line
+        inx                     ; new line
         ldy     #0              ; + cr
-L3:     sty     CURS_X
-        jmp     plot
+L3:     jmp     setcursor_pos
 
 newline:
         inc     CURS_Y
 
-; Set cursor position, calculate RAM pointers
+; Calculate cursor VRAM pointer
 
 plot:   ldy     CURS_X
         ldx     CURS_Y
-        jmp     setcursor       ; Set the new cursor
+        jmp     setcursor_screenptr     ; Set the new cursor 
 
 
 ; Write one character to the screen without doing anything else, return X
@@ -71,8 +72,8 @@ plot:   ldy     CURS_X
 
 putchar:
         ora     RVS             ; Set revers bit
-        ldy     SCREEN_PTR+1
-        ldx     SCREEN_PTR
+        ldx     SCREEN_PTR+1
+        ldy     SCREEN_PTR
         jmp     ppubuf_put
 
 ;-----------------------------------------------------------------------------
@@ -82,14 +83,8 @@ putchar:
 .segment        "ONCE"
 
 initconio:
-        jsr     ppuinit
-        jsr     paletteinit
+        ldx     #0
+        ldy     #0
+        sty     RVS             ; Reset revers
 
-        lda     #0
-        sta     RVS
-        sta     CURS_X
-        sta     CURS_Y
-
-        jmp     plot            ; Set the cursor
-
-
+        jmp     setcursor_pos   ; Set the cursor position
