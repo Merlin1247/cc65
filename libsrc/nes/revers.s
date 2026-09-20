@@ -12,11 +12,11 @@
 .proc   _revers
         ldx     RVS
         cpx     #$80            ; Old revers in carry
-        tax     
+        tax
         beq     @z
         lda     #$80
 @z:     sta     RVS
-        ROL     a               ; Load old revers
+        rol     a               ; Load old revers
         rts
 
 .endproc

@@ -14,11 +14,11 @@
 ;y+(++x*32)+$2000
 setcursor_pos:
 
-        STX CURS_Y          ; Fallthrough
+        stx CURS_Y          ; Fallthrough
 
 setcursor_posx:
 
-        STY CURS_X          ; Fallthrough
+        sty CURS_X          ; Fallthrough
 
 .proc   setcursor_screenptr
 
