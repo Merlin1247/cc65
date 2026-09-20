@@ -30,13 +30,13 @@ _cputcxy:
 
 ; Plot a character - also used as internal function
 
-_cputc: cmp     #$0d            ; CR?
+_cputc: cmp     #$0D            ; CR?
         bne     L1
         lda     #0
         sta     CURS_X
         beq     plot            ; Recalculate pointers
 
-L1:     cmp     #$0a            ; LF?
+L1:     cmp     #$0A            ; LF?
         beq     newline         ; Recalculate pointers
 
 ; Printable char of some sort
@@ -63,7 +63,7 @@ newline:
 
 plot:   ldy     CURS_X
         ldx     CURS_Y
-        jmp     setcursor_screenptr     ; Set the new cursor 
+        jmp     setcursor_screenptr     ; Set the new cursor
 
 
 ; Write one character to the screen without doing anything else, return X

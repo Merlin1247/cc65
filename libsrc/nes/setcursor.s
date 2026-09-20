@@ -22,18 +22,18 @@ setcursor_posx:
 
 .proc   setcursor_screenptr
 
-        sty SCREEN_PTR      ; Target val: --1000xx xxxyyyyy
+        sty      SCREEN_PTR      ; Target val: --1000xx xxxyyyyy
         inx
         txa
         sec
-        ror A 
-        ror A
-        ror a
-        sta SCREEN_PTR+1    ; Contains garbage in the most significant 2 bits
-        and #%11000000
-        ROR A
-        adc SCREEN_PTR
-        sta SCREEN_PTR
+        ror     a
+        ror     a
+        ror     a
+        sta     SCREEN_PTR+1    ; Contains garbage in the most significant 2 bits
+        and     #%11000000
+        ROR     a
+        adc     SCREEN_PTR
+        sta     SCREEN_PTR
         rts
 
 .endproc

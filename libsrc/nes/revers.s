@@ -16,7 +16,7 @@
         beq     @z
         lda     #$80
 @z:     sta     RVS
-        ROL     A               ; Load old revers
-        rts 
+        ROL     a               ; Load old revers
+        rts
 
 .endproc
