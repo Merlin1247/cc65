@@ -10,13 +10,13 @@
         .include        "nes.inc"
 
 .proc   _revers
-        ldx RVS
-        cpx #$80            ; Old revers in carry
-        tax
-        beq @z
-        lda #$80
-@z:     sta RVS
-        ROL A               ; Load old revers
+        ldx     RVS
+        cpx     #$80            ; Old revers in carry
+        tax     
+        beq     @z
+        lda     #$80
+@z:     sta     RVS
+        ROL     A               ; Load old revers
         rts 
 
 .endproc

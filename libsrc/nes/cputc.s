@@ -12,9 +12,8 @@
         .export         _cputcxy, _cputc, cputdirect, putchar
         .export         newline
         .constructor    initconio
-        .import         gotoxy
         .import         ppuinit, paletteinit, ppubuf_put
-        .import         setcursor_pos, setcursor_screenptr
+        .import         setcursor_pos, setcursor_screenptr, gotoxy
 
         .importzp       tmp3,tmp4
 

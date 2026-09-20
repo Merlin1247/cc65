@@ -6,7 +6,6 @@
 ; Set the cursor position and screen position
 
         .export         setcursor_pos, setcursor_posx, setcursor_screenptr
-        .export         setcursor_screenptr
 
         .include        "nes.inc"
 
@@ -14,8 +13,11 @@
 
 ;y+(++x*32)+$2000
 setcursor_pos:
-        STX CURS_Y
+
+        STX CURS_Y          ; Fallthrough
+
 setcursor_posx:
+
         STY CURS_X          ; Fallthrough
 
 .proc   setcursor_screenptr
