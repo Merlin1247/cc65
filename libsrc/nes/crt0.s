@@ -36,6 +36,40 @@
 
 .segment        "HEADER"
 
+;    +--------+------+------------------------------------------+
+;    | Offset | Size | Content(s)                               |
+;    +--------+------+------------------------------------------+
+;    |  0-2   |  3   | 'NES'                                    |
+;    |   3    |  1   | $1A                                      |
+;    |   4    |  1   | 16K PRG-ROM page count                   |
+;    |   5    |  1   | 8K CHR-ROM page count                    |
+;    |   6    |  1   | ROM Control Byte #1                      |
+;    |        |      |   %####vTsM                              |
+;    |        |      |    |  ||||+- 0=Horizontal mirroring      |
+;    |        |      |    |  ||||   1=Vertical mirroring        |
+;    |        |      |    |  |||+-- 1=Battery enabled           |
+;    |        |      |    |  ||+--- 1=512-byte trainer present  |
+;    |        |      |    |  |+---- 1=Four-screen mirroring     |
+;    |        |      |    +--+----- Mapper # (lower 4-bits)     |
+;    |   7    |  1   | ROM Control Byte #2                      |
+;    |        |      |   %####1000                              |
+;    |        |      |    |  |++--- NES2.0 identifier           |
+;    |        |      |    +--+----- Mapper # (upper 4-bits)     |
+;    |   8    |  1   | Mapper/Submapper                         |
+;    |        |      |   %ssss####                              |
+;    |        |      |    |  |+--+- mapper (uppermost 4-bits)   |
+;    |        |      |    +--+----- submapper                   |
+;    |   9    |  1   | PRG/CHR MSB                              |
+;    |   10   |  1   | (NV)SRAM size                            |
+;    |        |      |   %bbbbnnnn                              |
+;    |        |      |    |  |+--+- 64 << n non-battery bytes   |
+;    |        |      |    +--+----- 64 << n battery bytes       |
+;    |   11   |  1   | (NV)CHR-RAM size                         |
+;    | 12-15  |  8   | Other (see below)                        |
+;    | 16-..  |      | 16K PRG-ROM pages (in linear order)      |
+;    | ..-EOF |      | 8K CHR-ROM pages (in linear order)       |
+;    +--------+------+------------------------------------------+
+
 ; For complete documentation, visit https://nesdev.org/wiki/NES_2.0
 
         .byte   $4E,$45,$53,$1a ; "NES"^Z
@@ -45,8 +79,8 @@
         .byte   %00001000       ; mapper number, console type, NES2.0 identifier
         .byte   $00             ; mapper/submapper number
         .byte   $00             ; ROM size most significant bits
-        .byte   $77             ; 8kb battery-backed WRAM
-        .byte   $00             ; CHR-RAM size
+        .byte   $70             ; 8kb battery-backed WRAM
+        .byte   $00             ; battery CHR-RAM size
         .byte   0, 0, 0, 0      ; Remaining fields unspecified
 
 ; ------------------------------------------------------------------------
